@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import API from "../services/api";
 import ProductCard from "./ProductCard";
 import TotalCard from "./TotalCard";
+import OrderSuccessModal from "./WhatsApp/OrderSuccessModal";
 
 const OrderForm = () => {
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Cash");
+const [showSuccessModal, setShowSuccessModal] = useState(false);
+const [createdOrder, setCreatedOrder] = useState(null);
 
   const [products, setProducts] = useState([
     {
@@ -44,46 +47,85 @@ const OrderForm = () => {
     setProducts(products.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+// Validate products
+for (let i = 0; i < products.length; i++) {
+  const product = products[i];
 
-    try {
-      setLoading(true);
+  if (!product.perfumeName.trim()) {
+    alert(`Please enter Perfume Name for Product ${i + 1}`);
+    return;
+  }
 
-      const orderData = {
-        customerName,
-        phone,
-        paymentMethod,
-        products: products.map((p) => ({
-          perfumeName: p.perfumeName,
-          ml: Number(p.ml),
-          price: Number(p.price),
-        })),
-      };
+  if (!product.ml || Number(product.ml) <= 0) {
+    alert(`Please enter a valid ML for Product ${i + 1}`);
+    return;
+  }
 
-      const res = await API.post("/orders", orderData);
+  if (!product.price || Number(product.price) <= 0) {
+    alert(`Please enter a valid Price for Product ${i + 1}`);
+    return;
+  }
+}
 
-      alert(res.data.message);
+// Optional phone validation
+if (phone.trim() !== "") {
+  const cleanedPhone = phone.replace(/\D/g, "");
 
-      setCustomerName("");
-      setPhone("");
-      setPaymentMethod("Cash");
+  if (cleanedPhone.length !== 10) {
+    alert("Phone number must contain exactly 10 digits.");
+    return;
+  }
+}
+  try {
+    setLoading(true);
 
-      setProducts([
-        {
-          perfumeName: "",
-          ml: "",
-          price: "",
-        },
-      ]);
-    } catch (err) {
-      alert(err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const orderData = {
+      customerName,
+      phone,
+      paymentMethod,
+      products: products.map((p) => ({
+        perfumeName: p.perfumeName,
+        ml: Number(p.ml),
+        price: Number(p.price),
+      })),
+    };
+
+    const res = await API.post("/orders", orderData);
+
+    // Save the created order for WhatsApp
+    setCreatedOrder(res.data.order);
+
+    // Open success modal
+    setShowSuccessModal(true);
+
+    // Clear form
+    setCustomerName("");
+    setPhone("");
+    setPaymentMethod("Cash");
+
+    setProducts([
+      {
+        perfumeName: "",
+        ml: "",
+        price: "",
+      },
+    ]);
+
+  } catch (err) {
+
+    alert(err.response?.data?.message || "Something went wrong");
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
 
   return (
+    <>
     <form
       onSubmit={handleSubmit}
       className="max-w-5xl mx-auto py-6"
@@ -174,6 +216,14 @@ const OrderForm = () => {
       </button>
 
     </form>
+    <OrderSuccessModal
+  open={showSuccessModal}
+  order={createdOrder}
+  onClose={() => {
+    setShowSuccessModal(false);
+    setCreatedOrder(null);
+  }}
+/> </>
   );
 };
 
