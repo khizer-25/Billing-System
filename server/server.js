@@ -6,7 +6,6 @@ import connectDB from "./config/db.js";
 import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
-
 connectDB();
 
 const app = express();
