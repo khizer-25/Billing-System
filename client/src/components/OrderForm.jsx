@@ -196,7 +196,7 @@ if (phone.trim() !== "") {
         onClick={addProduct}
         className="w-full mb-6 py-4 rounded-xl border-2 border-dashed border-[#C9A227] text-[#3B2A20] font-bold hover:bg-[#FFF8E6] transition"
       >
-        + Add Another Product
+        + Add Product
       </button>
 
       {/* Total */}
