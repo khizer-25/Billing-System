@@ -44,7 +44,7 @@ const OrderHistory = () => {
   if (loading) {
     return (
       <div className="bg-white rounded-2xl shadow p-10 text-center">
-        <h2 className="text-xl font-semibold">Loading Orders...</h2>
+        <h2 className="text-xl font-semibold">Loading Orders..</h2>
       </div>
     );
   }

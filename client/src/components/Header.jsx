@@ -5,7 +5,7 @@ const Header = ({ activeTab, setActiveTab }) => {
     <div className="bg-[#3B2A20] text-white shadow-md">
       <div className="max-w-5xl mx-auto px-4 py-5">
         <h1 className="text-2xl md:text-3xl font-bold text-center">
-          🌹 AL-OZHAN BILLING
+           AL-OZHAN BILLING 
         </h1>
 
         <p className="text-center text-sm text-gray-300 mt-1">

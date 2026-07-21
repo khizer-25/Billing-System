@@ -59,7 +59,7 @@ for (let i = 0; i < products.length; i++) {
   }
 
   if (!product.ml || Number(product.ml) <= 0) {
-    alert(`Please enter a valid ML for Product ${i + 1}`);
+    alert(`Please enter a valid ml for Product ${i + 1}`);
     return;
   }
 
